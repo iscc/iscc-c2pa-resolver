@@ -30,6 +30,7 @@ Repository = "https://github.com/iscc/iscc-c2pa-resolver"
 
 [dependency-groups]
 dev = [
+    "brotli>=1.2.0",
     "datamodel-code-generator>=0.83",
     "hypothesis>=6.160",
     "mdformat>=1.0.0",
@@ -130,19 +131,21 @@ formatters = ["ruff-format"]
 
 [tool.poe.tasks]
 sync-c2pa = { cmd = "python scripts/sync_c2pa_openapi.py", help = "Copy the implemented subset of the C2PA OpenAPI from a specs-core checkout" }
+vendor-c2pa-web = { cmd = "python scripts/vendor_c2pa_web.py", help = "Download and precompress the in-browser C2PA reader and the C2PA trust list" }
 codegen = { sequence = [{ cmd = "python scripts/openapi_json.py" }, { cmd = "datamodel-codegen" }, { cmd = "ruff check --fix --quiet iscc_c2pa_resolver/schema" }, { cmd = "ruff format --quiet iscc_c2pa_resolver/schema" }], help = "Generate openapi.json and pydantic models from openapi.yaml" }
 format = { sequence = [{ cmd = "ruff format ." }, { cmd = "ruff check --fix ." }, { cmd = "mdformat README.md CLAUDE.md SECURITY.md docs" }], help = "Format and autofix code and docs" }
 lint = { sequence = [{ cmd = "ruff format --check ." }, { cmd = "ruff check ." }, { cmd = "mdformat --check README.md CLAUDE.md SECURITY.md docs" }], help = "Check formatting and lint rules" }
 typecheck = { cmd = "pyright", help = "Static type check" }
 test = { cmd = "pytest --cov --cov-report=term-missing --cov-report=xml", help = "Run tests with 100% branch coverage gate" }
+test-js = { cmd = "node --test --experimental-test-coverage --test-coverage-include=iscc_c2pa_resolver/static/credentials.js --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 tests/js/*.test.mjs", help = "Run the landing page JavaScript tests with a 100% coverage gate (needs Node 22.8+)" }
 audit = { cmd = "uv audit --frozen", help = "Check locked dependencies for known vulnerabilities" }
 serve = { cmd = "uvicorn iscc_c2pa_resolver.app:app --host 127.0.0.1 --port 45460 --reload", help = "Run a local dev server on port 45460" }
 conformance = { cmd = "bash scripts/conformance.sh ${base_url}", args = [{ name = "base_url", default = "http://127.0.0.1:45460/v1" }], help = "Run the C2PA conformance harness against a running server" }
 docs-serve = { cmd = "zensical serve --dev-addr 127.0.0.1:45461", help = "Preview the documentation site on port 45461" }
 docs-build = { cmd = "zensical-iscc build", help = "Build the documentation site into site/" }
 docs-check = { cmd = "zensical-iscc check --strict", help = "Check the built documentation site against the ISCC theme rules" }
-all = { sequence = ["format", "typecheck", "test"], help = "Format, type check and test (local dev loop)" }
-ci = { sequence = ["lint", "typecheck", "test", "audit"], help = "All quality gates without modifying files" }
+all = { sequence = ["format", "typecheck", "test", "test-js"], help = "Format, type check and test (local dev loop)" }
+ci = { sequence = ["lint", "typecheck", "test", "test-js", "audit"], help = "All quality gates without modifying files" }
 
 [tool.uv.sources]
 zensical-iscc = { git = "https://github.com/iscc/zensical-iscc", tag = "v0.2.0" }

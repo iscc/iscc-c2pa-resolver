@@ -1,5 +1,7 @@
 """End-to-end tests of the HTTP API with a fake aggregator and fake manifest repositories."""
 
+import base64
+import hashlib
 import json
 import re
 from urllib.parse import quote
@@ -26,6 +28,7 @@ from tests.conftest import (
 )
 
 ENDPOINT = "http://testserver/v1/iscc/maigkv5faaxoxyab"
+VENDOR = app_module.STATIC / "vendor"
 MATCH = {"manifestId": MANIFEST_ID, "endpoint": ENDPOINT, "similarityScore": 93, "isccId": ID_EARLY}
 MIRROR_URL = f"https://other.example/v1/manifests/{MANIFEST_ID}"
 
@@ -270,6 +273,93 @@ def test_static_assets_are_same_origin(client):
             assert client.get(ref).status_code == 200, ref
         assert "https://unpkg.com" not in html
         assert "cdn.jsdelivr" not in html
+
+
+def import_map(client):
+    """The import map of the landing page."""
+    html = client.get("/", headers={"Accept": "text/html"}).text
+    return json.loads(re.search(r'<script type="importmap">(.*?)</script>', html).group(1))["imports"]
+
+
+def check_script_constant(client, name):
+    """A string constant of the file check script."""
+    return re.search(rf'const {name} = "([^"]+)"', client.get("/static/check.js").text).group(1)
+
+
+def wasm_integrity():
+    """The SHA-512 digest that the vendored c2pa-web requires of its WebAssembly module (subresource integrity)."""
+    (chunk,) = VENDOR.glob("c2pa-web-*/c2pa-*.js")
+    return base64.b64decode(re.search(r'"sha512-([A-Za-z0-9+/=]+)"', chunk.read_text(encoding="utf-8")).group(1))
+
+
+def test_import_map_targets_exist(client):
+    for target in import_map(client).values():
+        assert client.get(target).status_code == 200, target
+
+
+def test_vendored_c2pa_web_imports_resolve(client):
+    imports = import_map(client)
+    for module in VENDOR.glob("c2pa-web-*/*.js"):
+        for specifier in re.findall(r'^import .*? from "([^"]+)";', module.read_text(encoding="utf-8"), re.MULTILINE):
+            assert (module.parent / specifier).is_file() if specifier.startswith("./") else specifier in imports
+
+
+def test_file_check_loads_vendored_assets(client):
+    c2pa_web = check_script_constant(client, "C2PA_WEB")
+    assert client.get(c2pa_web + "index.js").headers["content-type"].startswith("text/javascript")
+    assert client.get(c2pa_web + "c2pa_bg.wasm", headers={"Accept-Encoding": "br"}).status_code == 200
+    assert "-----BEGIN CERTIFICATE-----" in client.get(check_script_constant(client, "TRUST_LIST")).text
+
+
+@pytest.mark.parametrize(
+    ("accept", "coding"),
+    [
+        ("gzip, deflate, br, zstd", "br"),
+        ("gzip, deflate", "gzip"),
+        ("br;q=0, gzip;q=1", "gzip"),
+        ("BR ; Q = 0.000, GZIP;q=0.5", "gzip"),
+        ("*", "br"),
+        ("*, br;q=0", "gzip"),
+    ],
+)
+def test_wasm_is_served_precompressed(client, accept, coding):
+    response = client.get(
+        check_script_constant(client, "C2PA_WEB") + "c2pa_bg.wasm", headers={"Accept-Encoding": accept}
+    )
+    assert response.headers["content-encoding"] == coding
+    assert response.headers["content-type"] == "application/wasm"
+    assert "Accept-Encoding" in response.headers["vary"]
+    assert hashlib.sha512(response.content).digest() == wasm_integrity()
+
+
+@pytest.mark.parametrize("accept", ["identity", "br;q=0, gzip;q=0.", "*;q=0"])
+def test_wasm_needs_an_accepted_coding(client, accept):
+    url = check_script_constant(client, "C2PA_WEB") + "c2pa_bg.wasm"
+    assert client.get(url, headers={"Accept-Encoding": accept}).status_code == 404
+
+
+def test_stylesheet_keeps_hidden_elements_hidden(client):
+    # The upload offer is hidden while a file is checked; a display rule must not make its button clickable
+    css = client.get("/static/site.css").text
+    assert re.search(r"\[hidden\]\s*\{\s*display:\s*none\s*!important;\s*\}", css)
+
+
+def test_precompressed_files_answer_conditional_requests(client):
+    url = check_script_constant(client, "C2PA_WEB") + "c2pa_bg.wasm"
+    first = client.get(url, headers={"Accept-Encoding": "br"})
+    again = client.get(url, headers={"Accept-Encoding": "br", "If-None-Match": first.headers["etag"]})
+    assert again.status_code == 304
+
+
+def test_static_files_are_revalidated_before_reuse(client):
+    response = client.get("/static/check.js")
+    assert response.headers["cache-control"] == "no-cache"
+    assert "content-encoding" not in response.headers
+    assert client.get("/static/check.js", headers={"If-None-Match": response.headers["etag"]}).status_code == 304
+
+
+def test_static_files_refuse_other_methods(client):
+    assert client.post("/static/check.js").status_code == 405
 
 
 def test_docs_page_loads_spec(client):

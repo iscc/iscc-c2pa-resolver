@@ -24,6 +24,7 @@ uv run prek install         # git hooks (once per clone)
 uv run poe all              # format, type check, test (local loop)
 uv run poe ci               # all gates without modifying files
 uv run poe test             # pytest, 100% branch coverage required
+uv run poe test-js          # node --test for the landing page JavaScript, 100% coverage required (Node 22.8+)
 uv run pytest tests/test_binding.py::test_decode_value_is_lenient
 uv run poe serve            # dev server on 127.0.0.1:45460
 uv run poe conformance      # C2PA conformance harness against the dev server (needs Node)
@@ -32,6 +33,7 @@ uv run poe docs-build       # docs site into site/, with the Markdown copies of 
 uv run poe docs-check       # built docs against the ISCC theme rules
 uv run poe codegen          # regenerate openapi.json and schema/ from openapi/openapi.yaml
 uv run poe sync-c2pa <dir>  # refresh openapi/c2pa-sbr.json from a C2PA specs-core checkout
+uv run poe vendor-c2pa-web  # refresh the vendored c2pa-web, highgain and C2PA trust list
 ```
 
 ## Layout
@@ -43,9 +45,14 @@ uv run poe sync-c2pa <dir>  # refresh openapi/c2pa-sbr.json from a C2PA specs-co
     its `info.version` is the specification version the service reports
 - `iscc_c2pa_resolver/schema/` - pydantic models generated from `openapi.yaml` (`uv run poe codegen`); never edit
 - `iscc_c2pa_resolver/app.py` - route table, lifespan, error mapping (400 instead of 422, 405 with `Allow`), body
-    limit, CORS, landing page and `/docs`
+    limit, CORS, landing page, `/docs` and static files (precompressed copies, revalidated before reuse)
 - `iscc_c2pa_resolver/static/` - landing page and API reference page; `brand/` is copied from the ISCC brand kit,
-    `vendor/` holds Stoplight Elements 9.0.27 (do not edit either)
+    `vendor/` holds Stoplight Elements 9.0.27 and, written by `scripts/vendor_c2pa_web.py`, c2pa-web (WebAssembly
+    stored only as `.br` and `.gz`), highgain and the C2PA trust list (do not edit either)
+- `iscc_c2pa_resolver/static/check.js` - file check on the landing page: c2pa-web in the browser, then a search
+    with the file's soft binding or an ISCC from web.iscc.io (upload only after the visitor confirms)
+- `iscc_c2pa_resolver/static/credentials.js` - pure helpers of the file check (manifest summary, verdict, ISCC-SEQ),
+    tested by `tests/js/` with real c2pa-web output in `tests/data/store-*.json`
 - `iscc_c2pa_resolver/binding.py` - base64 and ISCC-SEQ decoding (IEP-0020), searchable unit filter
 - `iscc_c2pa_resolver/search.py` - aggregator client
 - `iscc_c2pa_resolver/gateway.py` - manifest ID from gateway URLs, 32-byte manifest store probe, manifest fetch
@@ -62,6 +69,8 @@ uv run poe sync-c2pa <dir>  # refresh openapi/c2pa-sbr.json from a C2PA specs-co
     or `c2pa-sbr.json` by hand; rerun `uv run poe sync-c2pa` to follow upstream.
 - HTTP client is `httpx2` (with `httpcore2`), not `httpx`.
 - Type hints as PEP 484 type comments; annotations only where FastAPI or pydantic need them.
+- The landing page JavaScript is plain ES modules without a build step. Manifest data is untrusted: set it as text,
+    never as HTML. Keep testable logic in `credentials.js`, free of DOM and network access.
 - Short pure functions, no nested functions, a docstring on every module and function.
 - Every gateway and manifest fetch goes through `netguard.public_transport()`; never add an outbound path that
     bypasses it.

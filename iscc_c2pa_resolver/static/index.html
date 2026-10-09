@@ -9,6 +9,7 @@
   <link rel="icon" href="/static/brand/favicon.ico" sizes="48x48">
   <link rel="stylesheet" href="/static/brand/tokens/iscc.css">
   <link rel="stylesheet" href="/static/site.css">
+  <script type="importmap">{"imports": {"highgain": "/static/vendor/highgain-0.1.0/index.js"}}</script>
 </head>
 <body data-network="{{network}}">
   <header class="bar">
@@ -25,21 +26,67 @@
 
   <main>
     <section class="hero">
-      <p class="label">C2PA Soft Binding Resolution API · io.iscc.v0</p>
-      <h1>Recover lost Content Credentials by content</h1>
-      <p class="lead">
-        A C2PA Manifest gets lost when a platform strips metadata or re-encodes a file. This service finds it
-        again: send the ISCC of the file, and it searches the ISCC Discovery Protocol for declarations of similar
-        content whose gateway URL is the address of a C2PA Manifest.
-      </p>
-      <p class="notice notice--testnet"><strong>Testnet.</strong> This instance searches the ISCC testnet.
-        Declarations here are for testing.</p>
-      <p class="notice"><strong>Experimental (beta, MVP).</strong> Provided as is, without warranty of any kind.
-        The API, the gateway contract and the public instances may change in breaking ways before version 1.0.</p>
-      <p class="actions">
-        <a class="btn btn--primary" href="/docs">API reference</a>
-        <a class="btn" href="https://c2pa-resolver.iscc.codes/">Documentation</a>
-      </p>
+      <div class="hero__intro">
+        <p class="label">C2PA Soft Binding Resolution API · io.iscc.v0</p>
+        <h1>Recover lost Content Credentials by content</h1>
+        <p class="lead">
+          A C2PA Manifest gets lost when a platform strips metadata or re-encodes a file. This service finds it
+          again: send the ISCC of the file, and it searches the ISCC Discovery Protocol for declarations of similar
+          content whose gateway URL is the address of a C2PA Manifest.
+        </p>
+      </div>
+
+      <aside class="checker" id="check" aria-labelledby="check-title">
+        <h2 class="checker__title" id="check-title">Check a file</h2>
+        <p class="checker__lead">Read and validate its Content Credentials, then search for lost ones.</p>
+        <label class="drop" id="drop" data-state="idle">
+          <input class="drop__input" type="file" id="file" aria-describedby="check-privacy">
+          <span class="drop__icon" aria-hidden="true">
+            <svg class="drop__idle" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor"
+              stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 15V3m0 0L7.5 7.5M12 3l4.5 4.5"/><path d="M3 15v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4"/>
+            </svg>
+            <svg class="drop__done" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor"
+              stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>
+              <path d="m9 14 2 2 4-4"/>
+            </svg>
+            <span class="spinner drop__busy"></span>
+          </span>
+          <span class="drop__title" id="drop-title" aria-live="polite">Drop a file here</span>
+          <span class="drop__hint" id="drop-hint">or click to choose one</span>
+        </label>
+        <p class="checker__privacy" id="check-privacy">Runs in your browser. Nothing is uploaded unless you ask
+          for a search.</p>
+      </aside>
+
+      <div class="hero__more">
+        <p class="notice notice--testnet"><strong>Testnet.</strong> This instance searches the ISCC testnet.
+          Declarations here are for testing.</p>
+        <p class="notice"><strong>Experimental (beta, MVP).</strong> Provided as is, without warranty of any kind.
+          The API, the gateway contract and the public instances may change in breaking ways before version 1.0.</p>
+        <p class="actions">
+          <a class="btn btn--primary" href="/docs">API reference</a>
+          <a class="btn" href="https://c2pa-resolver.iscc.codes/">Documentation</a>
+        </p>
+      </div>
+    </section>
+
+    <section class="results" id="results" aria-labelledby="results-title" hidden>
+      <div class="results__head">
+        <h2 id="results-title">Content Credentials</h2>
+        <button class="btn btn--small" type="button" id="another">Check another file</button>
+      </div>
+      <div id="checked"></div>
+      <div class="offer" id="offer" hidden>
+        <div class="offer__text">
+          <h3 id="offer-title"></h3>
+          <p id="offer-text"></p>
+        </div>
+        <button class="btn btn--primary" type="button" id="search">Search</button>
+      </div>
+      <p class="message" id="message" role="status" aria-live="polite"></p>
+      <div id="found"></div>
     </section>
 
     <section>
@@ -80,5 +127,6 @@
     <span class="version">v{{version}}</span>
   </footer>
   <script src="/static/status.js" defer></script>
+  <script type="module" src="/static/check.js"></script>
 </body>
 </html>

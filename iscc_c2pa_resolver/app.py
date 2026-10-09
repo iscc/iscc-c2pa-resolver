@@ -10,6 +10,7 @@ import contextlib
 import html
 import json
 import mimetypes
+import re
 import typing  # noqa: F401 (used in type comments)
 from datetime import UTC, datetime
 from pathlib import Path
@@ -22,6 +23,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
+from starlette.datastructures import Headers
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.routing import Match
 
@@ -50,9 +52,51 @@ NOT_FOUND = "C2PA Manifest not found"
 USER_AGENT = f"iscc-c2pa-resolver/{__version__} (+https://github.com/iscc/iscc-c2pa-resolver)"
 MaxResults = Annotated[int, Query(ge=1)]
 NETWORKS = {"idp": "mainnet", "idptest": "testnet"}  # aggregator index -> ISCC network
+PRECOMPRESSED = (("br", ".br"), ("gzip", ".gz"))  # content coding and file suffix, in order of preference
+REFUSED = re.compile(r"\s*q\s*=\s*0(\.0{0,3})?\s*")  # parameters of an Accept-Encoding element that refuse it
 mimetypes.add_type("application/yaml", ".yaml")
 mimetypes.add_type("application/json", ".json")
 mimetypes.add_type("font/woff2", ".woff2")
+mimetypes.add_type("application/wasm", ".wasm")
+
+
+def accepts_coding(header, coding):
+    # type: (str, str) -> bool
+    """Whether an `Accept-Encoding` header accepts a content coding, by name or through `*`, with a weight above 0."""
+    accepted = {}  # type: dict[str, bool]
+    for element in header.lower().split(","):
+        name, _, params = element.partition(";")
+        accepted[name.strip()] = not REFUSED.fullmatch(params)
+    return accepted.get(coding, accepted.get("*", False))
+
+
+class PrecompressedFiles(StaticFiles):
+    """Static files where a file may be stored only as a precompressed `.br` or `.gz` copy.
+
+    Such a file is served in the first stored content coding that the client accepts, with `Content-Encoding` set.
+    Every response asks browsers to revalidate before reuse, so that the modules of the page update together.
+    """
+
+    async def get_response(self, path, scope):
+        # type: (str, typing.MutableMapping[str, typing.Any]) -> Response
+        """Serve the file itself, or else its precompressed copy; 404 if neither is available."""
+        header = Headers(scope=scope).get("accept-encoding", "")
+        candidates = [(path, None)] + [
+            (path + suffix, coding) for coding, suffix in PRECOMPRESSED if accepts_coding(header, coding)
+        ]
+        for candidate, coding in candidates:
+            try:
+                response = await super().get_response(candidate, scope)
+            except StarletteHTTPException as e:
+                if e.status_code != 404:
+                    raise
+                continue
+            response.headers["Cache-Control"] = "no-cache"
+            if coding:
+                response.headers["Content-Encoding"] = coding
+                response.headers["Vary"] = "Accept-Encoding"
+            return response
+        raise StarletteHTTPException(404)
 
 
 class BodyLimit:
@@ -323,7 +367,7 @@ def create_app(settings=None, transport=None):
         methods = [method, "HEAD"] if method == "GET" else [method]  # RFC 9110: GET implies HEAD
         app.add_api_route(path, endpoint, methods=methods, response_model_exclude_none=True)
     app.mount("/openapi", StaticFiles(directory=HERE / "openapi"), name="openapi")
-    app.mount("/static", StaticFiles(directory=STATIC), name="static")
+    app.mount("/static", PrecompressedFiles(directory=STATIC), name="static")
     app.add_exception_handler(RequestValidationError, bad_request)
     app.add_exception_handler(StarletteHTTPException, http_error)
     app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET", "POST"], allow_headers=["*"])

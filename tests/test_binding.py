@@ -1,16 +1,26 @@
 """Tests for decoding `io.iscc.v0` soft binding values, using the IEP-0020 test vectors."""
 
 import base64
+import json
 
 import iscc_core as ic
 import pytest
 
 from iscc_c2pa_resolver.binding import MAX_VALUE_LENGTH, decode_base64, decode_value, is_searchable
-from tests.conftest import CONTENT, DATA_CODE, INSTANCE, META, VECTOR_1, encode
+from tests.conftest import CONTENT, DATA, DATA_CODE, INSTANCE, META, VECTOR_1, encode
 
 
 def test_decode_value_vector_1_drops_meta_code():
     assert decode_value(VECTOR_1) == [CONTENT, DATA_CODE, INSTANCE]
+
+
+def test_decode_value_of_a_signed_manifest():
+    """The landing page sends the soft binding of a manifest as base64 of its bytes; the demo app signed this one."""
+    store = json.loads((DATA / "store-iscc-untrusted.json").read_text(encoding="utf-8"))
+    manifest = store["manifests"][store["active_manifest"]]
+    (assertion,) = [a for a in manifest["assertions"] if a["label"] == "c2pa.soft-binding"]
+    value = base64.b64encode(bytes(assertion["data"]["blocks"][0]["value"])).decode()
+    assert [ic.iscc_decode(unit)[0] for unit in decode_value(value)] == [ic.MT.CONTENT, ic.MT.DATA, ic.MT.INSTANCE]
 
 
 def test_decode_value_matches_reference_encoding():

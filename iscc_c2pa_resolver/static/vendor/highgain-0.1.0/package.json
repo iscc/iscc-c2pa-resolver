@@ -1,0 +1,31 @@
+{
+  "name": "highgain",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Simple and typesafe worker RPC.",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [],
+  "author": {
+    "name": "Eli Mensch",
+    "email": "eli.mensch@gmail.com"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "rimraf": "^6.0.1",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.7",
+    "vite-plugin-dts": "^4.5.4"
+  },
+  "scripts": {
+    "build": "vite build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

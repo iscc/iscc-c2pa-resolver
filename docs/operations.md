@@ -48,6 +48,12 @@ discovery document advertises absolute URLs built from the request, so without t
 `X-Forwarded-Host` headers it would announce `http://` addresses. Access logs then also show client addresses. The
 resolver does not rate-limit; apply per-client limits at the proxy.
 
+The file check on the landing page loads a WebAssembly module that the app stores precompressed and sends with
+`Content-Encoding: br` or `gzip`; the proxy should pass it through unchanged. After the visitor confirms, the
+browser uploads a file to `https://web.iscc.io` to compute its ISCC. A Content Security Policy at the proxy must
+allow that origin in `connect-src`, `blob:` in `worker-src` and `img-src`, and `'wasm-unsafe-eval'` in
+`script-src`.
+
 ## Images and releases
 
 | Tag                 | Published when                                                                   |

@@ -1,0 +1,52 @@
+{
+  "name": "@contentauth/c2pa-web",
+  "version": "0.15.3",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/contentauth/c2pa-js"
+  },
+  "type": "module",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "exports": {
+    "./package.json": "./package.json",
+    "./resources/c2pa.wasm": "./dist/resources/c2pa_bg.wasm",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./inline": {
+      "types": "./dist/inline.d.ts",
+      "import": "./dist/inline.js",
+      "default": "./dist/inline.js"
+    },
+    "./c2pa_worker": {
+      "import": "./dist/c2pa_worker.js",
+      "default": "./dist/c2pa_worker.js"
+    }
+  },
+  "dependencies": {
+    "highgain": "^0.1.0",
+    "@contentauth/c2pa-wasm": "0.13.2",
+    "@contentauth/c2pa-types": "0.7.5",
+    "@contentauth/c2pa-utilities": "0.3.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "@types/ssri": "^7.1.5",
+    "@vitest/browser": "^3.2.4",
+    "vitest": "^3.0.0",
+    "msw": "^2.12.1",
+    "rimraf": "^6.0.1",
+    "typedoc": "^0.28.12",
+    "vite-tsconfig-paths": "^5.1.4"
+  },
+  "scripts": {
+    "build:docs": "typedoc src/index.ts src/inline.ts"
+  }
+}

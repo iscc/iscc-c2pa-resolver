@@ -49,6 +49,9 @@ Then `GET {endpoint}/manifests/{manifestId}` returns the C2PA Manifest Store.
 - `GET /v1/services/supportedAlgorithms`, `/capabilities`, `/status` and
     `/.well-known/c2pa-soft-binding-resolution`
 - Open access, no store or bindings routes; it passes the C2PA Soft Binding API conformance harness
+- A file check on the landing page: it reads and validates the Content Credentials of a file in the browser, then
+    searches for C2PA Manifests of the same content, with the file's own `io.iscc.v0` soft binding or, after the
+    visitor confirms the upload, an ISCC computed by [web.iscc.io](https://web.iscc.io)
 
 Repositories become findable by declaring their assets with the manifest address on their Soft Binding Resolution
 API (`https://…/manifests/{manifestId}`) as gateway URL. See the [documentation](https://c2pa-resolver.iscc.codes/) for the API, the gateway contract,

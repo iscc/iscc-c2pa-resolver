@@ -1,0 +1,280 @@
+{
+  "active_manifest": "urn:c2pa:00e329f5-cd6d-465d-bdd6-c782c9f08999",
+  "manifests": {
+    "urn:c2pa:00e329f5-cd6d-465d-bdd6-c782c9f08999": {
+      "claim_generator_info": [
+        {
+          "name": "ISCC C2PA Demo",
+          "version": "0.1.0",
+          "org.contentauth.c2pa_rs": "0.91.0"
+        }
+      ],
+      "title": "no manifest",
+      "instance_id": "xmp.iid:c12ed5c0-79c4-4830-88c7-cc76d7502a4c",
+      "thumbnail": {
+        "format": "image/jpeg",
+        "identifier": "self#jumbf=/c2pa/urn:c2pa:00e329f5-cd6d-465d-bdd6-c782c9f08999/c2pa.assertions/c2pa.thumbnail.claim"
+      },
+      "assertions": [
+        {
+          "label": "c2pa.actions.v2",
+          "data": {
+            "actions": [
+              {
+                "action": "c2pa.created",
+                "digitalSourceType": "http://cv.iptc.org/newscodes/digitalsourcetype/digitalCapture"
+              }
+            ]
+          },
+          "created": true
+        },
+        {
+          "label": "c2pa.soft-binding",
+          "data": {
+            "alg": "io.iscc.v0",
+            "bindingMetadata": {
+              "contact": "info@iscc.io",
+              "description": "International Standard Content Code (ISCC - ISO 24138:2024) - Open Source Content Identification",
+              "informationalUrl": "https://ieps.iscc.codes/iep-0020/"
+            },
+            "blocks": [
+              {
+                "scope": {},
+                "value": [
+                  0,
+                  7,
+                  182,
+                  206,
+                  151,
+                  127,
+                  145,
+                  58,
+                  176,
+                  57,
+                  205,
+                  190,
+                  109,
+                  221,
+                  219,
+                  191,
+                  109,
+                  67,
+                  91,
+                  193,
+                  16,
+                  29,
+                  175,
+                  167,
+                  224,
+                  81,
+                  31,
+                  183,
+                  71,
+                  123,
+                  166,
+                  80,
+                  152,
+                  123,
+                  33,
+                  7,
+                  170,
+                  210,
+                  71,
+                  163,
+                  90,
+                  226,
+                  15,
+                  92,
+                  85,
+                  165,
+                  142,
+                  70,
+                  181,
+                  196,
+                  30,
+                  185,
+                  210,
+                  71,
+                  163,
+                  90,
+                  243,
+                  15,
+                  92,
+                  40,
+                  165,
+                  142,
+                  70,
+                  181,
+                  198,
+                  30,
+                  185,
+                  81,
+                  48,
+                  7,
+                  49,
+                  241,
+                  52,
+                  58,
+                  92,
+                  59,
+                  237,
+                  190,
+                  172,
+                  108,
+                  114,
+                  57,
+                  52,
+                  20,
+                  159,
+                  157,
+                  11,
+                  149,
+                  66,
+                  27,
+                  206,
+                  53,
+                  83,
+                  201,
+                  102,
+                  94,
+                  79,
+                  33,
+                  119,
+                  62,
+                  144,
+                  20,
+                  64,
+                  7,
+                  70,
+                  120,
+                  253,
+                  234,
+                  235,
+                  200,
+                  186,
+                  208,
+                  228,
+                  229,
+                  197,
+                  4,
+                  204,
+                  118,
+                  170,
+                  239,
+                  94,
+                  35,
+                  165,
+                  113,
+                  11,
+                  191,
+                  153,
+                  3,
+                  208,
+                  70,
+                  55,
+                  123,
+                  3,
+                  65,
+                  13,
+                  14
+                ]
+              }
+            ],
+            "pad": []
+          }
+        },
+        {
+          "label": "cawg.metadata",
+          "data": {
+            "@context": {
+              "dc": "http://purl.org/dc/elements/1.1/"
+            },
+            "dc:title": "no manifest"
+          },
+          "kind": "Json"
+        }
+      ],
+      "signature_info": {
+        "alg": "Es256",
+        "issuer": "C2PA Test Signing Cert",
+        "common_name": "C2PA Signer",
+        "cert_serial_number": "640229841392226413189608867977836244731148734950",
+        "time": "2026-09-27T13:08:58+00:00"
+      },
+      "label": "urn:c2pa:00e329f5-cd6d-465d-bdd6-c782c9f08999",
+      "claim_version": 2
+    }
+  },
+  "validation_results": {
+    "activeManifest": {
+      "success": [
+        {
+          "code": "timeStamp.validated",
+          "url": "self#jumbf=/c2pa/urn:c2pa:00e329f5-cd6d-465d-bdd6-c782c9f08999/c2pa.signature",
+          "explanation": "timestamp message digest matched: Local review TSA"
+        },
+        {
+          "code": "signingCredential.trusted",
+          "url": "self#jumbf=/c2pa/urn:c2pa:00e329f5-cd6d-465d-bdd6-c782c9f08999/c2pa.signature",
+          "explanation": "signing certificate trusted, found in [manifest_user_anchors] trust anchors"
+        },
+        {
+          "code": "claimSignature.insideValidity",
+          "url": "self#jumbf=/c2pa/urn:c2pa:00e329f5-cd6d-465d-bdd6-c782c9f08999/c2pa.signature",
+          "explanation": "claim signature valid"
+        },
+        {
+          "code": "claimSignature.validated",
+          "url": "self#jumbf=/c2pa/urn:c2pa:00e329f5-cd6d-465d-bdd6-c782c9f08999/c2pa.signature",
+          "explanation": "claim signature valid"
+        },
+        {
+          "code": "assertion.hashedURI.match",
+          "url": "self#jumbf=/c2pa/urn:c2pa:00e329f5-cd6d-465d-bdd6-c782c9f08999/c2pa.assertions/c2pa.actions.v2",
+          "explanation": "hashed uri matched: self#jumbf=c2pa.assertions/c2pa.actions.v2"
+        },
+        {
+          "code": "assertion.hashedURI.match",
+          "url": "self#jumbf=/c2pa/urn:c2pa:00e329f5-cd6d-465d-bdd6-c782c9f08999/c2pa.assertions/c2pa.hash.data",
+          "explanation": "hashed uri matched: self#jumbf=c2pa.assertions/c2pa.hash.data"
+        },
+        {
+          "code": "assertion.hashedURI.match",
+          "url": "self#jumbf=/c2pa/urn:c2pa:00e329f5-cd6d-465d-bdd6-c782c9f08999/c2pa.assertions/c2pa.thumbnail.claim",
+          "explanation": "hashed uri matched: self#jumbf=c2pa.assertions/c2pa.thumbnail.claim"
+        },
+        {
+          "code": "assertion.hashedURI.match",
+          "url": "self#jumbf=/c2pa/urn:c2pa:00e329f5-cd6d-465d-bdd6-c782c9f08999/c2pa.assertions/c2pa.soft-binding",
+          "explanation": "hashed uri matched: self#jumbf=c2pa.assertions/c2pa.soft-binding"
+        },
+        {
+          "code": "assertion.hashedURI.match",
+          "url": "self#jumbf=/c2pa/urn:c2pa:00e329f5-cd6d-465d-bdd6-c782c9f08999/c2pa.assertions/cawg.metadata",
+          "explanation": "hashed uri matched: self#jumbf=c2pa.assertions/cawg.metadata"
+        },
+        {
+          "code": "assertion.dataHash.match",
+          "url": "self#jumbf=/c2pa/urn:c2pa:00e329f5-cd6d-465d-bdd6-c782c9f08999/c2pa.assertions/c2pa.hash.data",
+          "explanation": "data hash valid"
+        }
+      ],
+      "informational": [
+        {
+          "code": "signingCredential.ocsp.skipped",
+          "url": "self#jumbf=/c2pa/urn:c2pa:00e329f5-cd6d-465d-bdd6-c782c9f08999/c2pa.signature",
+          "explanation": "OCSP fetching skipped"
+        },
+        {
+          "code": "timeStamp.untrusted",
+          "url": "self#jumbf=/c2pa/urn:c2pa:00e329f5-cd6d-465d-bdd6-c782c9f08999/c2pa.signature",
+          "explanation": "timestamp cert untrusted: Local review TSA"
+        }
+      ],
+      "failure": []
+    },
+    "specVersion": "2.4.0",
+    "trustListUri": "manifest_user_anchors"
+  },
+  "validation_state": "Trusted"
+}

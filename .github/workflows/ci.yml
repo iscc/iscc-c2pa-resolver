@@ -56,6 +56,26 @@ jobs:
       - run: uv sync --frozen
       - run: uv run poe test
 
+  test-js:
+    name: Test (JavaScript)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.13"
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24"
+          package-manager-cache: false
+      - run: uv sync --frozen
+      - run: uv run poe test-js
+
   container:
     name: Container build and conformance
     runs-on: ubuntu-latest
@@ -84,7 +104,7 @@ jobs:
           done
           docker inspect -f '{{.State.Health.Status}}' resolver | grep -qx healthy
           [ "$(docker exec resolver id -u)" = 10001 ]
-          for path in / /docs /openapi/openapi.json /openapi/openapi.yaml /openapi/c2pa-sbr.json /static/site.css; do
+          for path in / /docs /openapi/openapi.json /openapi/openapi.yaml /openapi/c2pa-sbr.json /static/site.css /static/check.js; do
             curl -sf -H "Accept: text/html" "http://127.0.0.1:8000$path" > /dev/null || { echo "::error::$path"; exit 1; }
           done
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
