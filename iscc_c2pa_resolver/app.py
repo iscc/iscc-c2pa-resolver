@@ -320,7 +320,8 @@ def create_app(settings=None, transport=None):
     app.state.settings = settings or Settings()  # type: ignore[call-arg]
     app.state.transport = transport
     for path, endpoint, method in ROUTES:
-        app.add_api_route(path, endpoint, methods=[method], response_model_exclude_none=True)
+        methods = [method, "HEAD"] if method == "GET" else [method]  # RFC 9110: GET implies HEAD
+        app.add_api_route(path, endpoint, methods=methods, response_model_exclude_none=True)
     app.mount("/openapi", StaticFiles(directory=HERE / "openapi"), name="openapi")
     app.mount("/static", StaticFiles(directory=STATIC), name="static")
     app.add_exception_handler(RequestValidationError, bad_request)

@@ -122,6 +122,6 @@ def test_spec_paths_match_app_routes(settings):
         (route.path_format, method)  # path without converters such as ":path"
         for route in app.routes
         for method in getattr(route, "methods", None) or ()
-        if route.path.startswith(("/v1/", "/.well-known/"))
+        if route.path.startswith(("/v1/", "/.well-known/")) and method != "HEAD"  # implied by GET (RFC 9110)
     }
     assert documented == routed

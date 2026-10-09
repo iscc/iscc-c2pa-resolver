@@ -322,9 +322,42 @@ def test_chunked_body_refused(client):
 
 @pytest.mark.parametrize(
     ("method", "path", "allow"),
-    [("PUT", "/v1/matches/byBinding", "GET, POST"), ("DELETE", "/v1/services/status", "GET")],
+    [("PUT", "/v1/matches/byBinding", "GET, HEAD, POST"), ("DELETE", "/v1/services/status", "GET, HEAD")],
 )
 def test_method_not_allowed_lists_all_methods(client, method, path, allow):
     response = client.request(method, path)
     assert response.status_code == 405
     assert response.headers["allow"] == allow
+
+
+def assert_head_like_get(client, path):
+    """HEAD answers with the status and headers of GET, without content."""
+    get = client.get(path)
+    head = client.head(path)
+    assert head.status_code == get.status_code == 200
+    assert head.headers["content-type"] == get.headers["content-type"]
+    assert head.headers["content-length"] == get.headers["content-length"]
+    assert head.content == b""
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "/",
+        "/docs",
+        "/healthz",
+        "/.well-known/c2pa-soft-binding-resolution",
+        "/v1/services/supportedAlgorithms",
+        "/v1/services/capabilities",
+        "/v1/services/status",
+    ],
+)
+def test_head_on_service_routes(client, path):
+    assert_head_like_get(client, path)
+
+
+def test_head_on_query_and_manifest(client, net):
+    publish(net)
+    assert_head_like_get(client, f"/v1/matches/byBinding?alg=io.iscc.v0&value={quote(VECTOR_1, safe='')}")
+    assert_head_like_get(client, f"{ENDPOINT}/manifests/{MANIFEST_ID}")
+    assert_head_like_get(client, f"/v1/manifests/{MANIFEST_ID}")
