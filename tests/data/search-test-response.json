@@ -1,0 +1,20 @@
+{
+  "query": {
+    "units": [
+      "ISCC:EAD6YXMM7JED4UZECPWP5SS7T3YVDDJYI4WPQJ7BI3HIZ55KQEZ7N6Q"
+    ]
+  },
+  "global_matches": [
+    {
+      "iscc_id": "ISCC:MAIGKV5FAAXOXYAB",
+      "score": 1.0,
+      "types": {
+        "CONTENT_TEXT_V0": 1.0
+      },
+      "metadata": {
+        "gateway": "https://titusz.org/iscc/gateway/maigkv5faaxoxyab.json"
+      }
+    }
+  ],
+  "chunk_matches": []
+}

@@ -1,0 +1,487 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "ISCC C2PA Resolver",
+    "version": "0.1.0",
+    "summary": "C2PA Soft Binding Resolution API for io.iscc.v0 on the ISCC Discovery Protocol",
+    "description": "Recovers C2PA Manifests by content. Send the base64 ISCC-SEQ of an asset (IEP-0020) as an `io.iscc.v0` soft\nbinding; the resolver searches the ISCC Discovery Protocol for declarations of similar content whose gateway URL\nis the address of a C2PA Manifest, and returns those manifests as matches.\n\nImplements the query, fetch and service routes of the C2PA Soft Binding Resolution API as defined for the\nupcoming C2PA specification 2.5, whose OpenAPI document still carries version 2.4.0. Schemas named `c2pa.*` are\ncopied verbatim from the C2PA OpenAPI document (`c2pa-sbr.json`, CC BY 4.0).\nAccess is open; no token is required.\n\n**Experimental (beta, MVP).** This service and its documentation are provided as is, without warranty of any kind. The API, the gateway contract and the public instances may change in breaking ways before version 1.0.\n",
+    "license": {
+      "name": "Apache-2.0",
+      "identifier": "Apache-2.0"
+    }
+  },
+  "externalDocs": {
+    "description": "Documentation",
+    "url": "https://c2pa-resolver.iscc.codes/"
+  },
+  "tags": [
+    {
+      "name": "query",
+      "description": "Find C2PA Manifests by soft binding"
+    },
+    {
+      "name": "fetch",
+      "description": "Retrieve C2PA Manifests"
+    },
+    {
+      "name": "service",
+      "description": "Service discovery, capabilities and status"
+    }
+  ],
+  "paths": {
+    "/v1/matches/byBinding": {
+      "get": {
+        "tags": [
+          "query"
+        ],
+        "summary": "Find C2PA Manifests for an io.iscc.v0 soft binding",
+        "operationId": "queryByBinding",
+        "parameters": [
+          {
+            "name": "alg",
+            "in": "query",
+            "required": true,
+            "description": "Soft binding algorithm. This service supports `io.iscc.v0` only.",
+            "schema": {
+              "type": "string",
+              "maxLength": 64,
+              "examples": [
+                "io.iscc.v0"
+              ]
+            }
+          },
+          {
+            "name": "value",
+            "in": "query",
+            "required": true,
+            "description": "Base64 ISCC-SEQ as specified in IEP-0020, percent-encoded.",
+            "schema": {
+              "type": "string",
+              "maxLength": 4096
+            }
+          },
+          {
+            "$ref": "#/components/parameters/maxResults"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/QueryResult"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServiceFailure"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "query"
+        ],
+        "summary": "Find C2PA Manifests for an io.iscc.v0 soft binding sent as JSON",
+        "operationId": "queryByLargeBinding",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/maxResults"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "c2pa-sbr.json#/components/schemas/c2pa.softBindingQuery"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/QueryResult"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "411": {
+            "$ref": "#/components/responses/LengthRequired"
+          },
+          "413": {
+            "$ref": "#/components/responses/TooLarge"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServiceFailure"
+          }
+        }
+      }
+    },
+    "/v1/manifests/{activeManifestId}": {
+      "get": {
+        "tags": [
+          "fetch"
+        ],
+        "summary": "Return the C2PA Manifest Store of a recently returned manifest ID",
+        "description": "Fallback for clients that ignore the `endpoint` of a match. Knows the manifest IDs that a query to the same\nresolver process returned within the last hour; any other ID gets 404. The manifest is read from the gateway\nURL of the declaration and passed through unchanged.\n",
+        "operationId": "getManifestById",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/activeManifestId"
+          },
+          {
+            "$ref": "#/components/parameters/returnActiveManifest"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ManifestStore"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/ManifestNotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ManifestFailure"
+          }
+        }
+      }
+    },
+    "/v1/iscc/{isccId}/manifests/{activeManifestId}": {
+      "get": {
+        "tags": [
+          "fetch"
+        ],
+        "summary": "Return the C2PA Manifest Store that a declaration points to",
+        "description": "The `endpoint` of every match is `/v1/iscc/{isccId}` on this resolver, so C2PA clients fetch the manifest\nhere. The resolver looks up the declaration, checks that its gateway URL is the manifest address of the\nrequested manifest ID, and passes the manifest through unchanged. Nothing is stored between requests.\n",
+        "operationId": "getDeclaredManifest",
+        "parameters": [
+          {
+            "name": "isccId",
+            "in": "path",
+            "required": true,
+            "description": "ISCC-ID of the declaration in lowercase without the `ISCC:` prefix",
+            "schema": {
+              "type": "string",
+              "examples": [
+                "maigkv5faaxoxyab"
+              ]
+            }
+          },
+          {
+            "$ref": "#/components/parameters/activeManifestId"
+          },
+          {
+            "$ref": "#/components/parameters/returnActiveManifest"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ManifestStore"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/ManifestNotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ManifestFailure"
+          }
+        }
+      }
+    },
+    "/v1/services/supportedAlgorithms": {
+      "get": {
+        "tags": [
+          "service"
+        ],
+        "summary": "List the soft binding algorithms supported in queries",
+        "operationId": "getSupportedBindings",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "c2pa-sbr.json#/components/schemas/c2pa.softBindingAlgList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/services/status": {
+      "get": {
+        "tags": [
+          "service"
+        ],
+        "summary": "Report the operational status; degraded while the search backend is not ready",
+        "operationId": "getServiceStatus",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "c2pa-sbr.json#/components/schemas/c2pa.serviceStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/services/capabilities": {
+      "get": {
+        "tags": [
+          "service"
+        ],
+        "summary": "Report the implemented specification version and optional capabilities",
+        "operationId": "getServiceCapabilities",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "c2pa-sbr.json#/components/schemas/c2pa.serviceCapabilities"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/.well-known/c2pa-soft-binding-resolution": {
+      "get": {
+        "tags": [
+          "service"
+        ],
+        "summary": "Discovery information for this soft binding resolution service",
+        "operationId": "getWellKnown",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "c2pa-sbr.json#/components/schemas/c2pa.wellKnownDiscovery"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "maxResults": {
+        "name": "maxResults",
+        "in": "query",
+        "description": "Maximum number of matches to return; values above 100 are capped at 100.",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 10
+        }
+      },
+      "activeManifestId": {
+        "name": "activeManifestId",
+        "in": "path",
+        "required": true,
+        "description": "Identifier of the active C2PA Manifest to return",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "returnActiveManifest": {
+        "name": "returnActiveManifest",
+        "in": "query",
+        "description": "Accepted and ignored; the manifest address decides what is returned.",
+        "schema": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "responses": {
+      "ManifestStore": {
+        "description": "The C2PA Manifest Store, as served by the manifest address of the declaration",
+        "content": {
+          "application/c2pa": {}
+        }
+      },
+      "ManifestNotFound": {
+        "description": "C2PA Manifest not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "ManifestFailure": {
+        "description": "The search backend or the manifest repository is unavailable",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "QueryResult": {
+        "description": "Matches, best first",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/IsccQueryResult"
+            }
+          }
+        }
+      },
+      "BadRequest": {
+        "description": "Invalid query value or parameter",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "LengthRequired": {
+        "description": "Request body sent without Content-Length",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "TooLarge": {
+        "description": "Request body larger than 16 KB",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "ServiceFailure": {
+        "description": "The search backend is unavailable",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "IsccQueryResult": {
+        "description": "Result of a soft binding query (c2pa.softBindingQueryResult with ISCC match extensions)",
+        "type": "object",
+        "required": [
+          "matches"
+        ],
+        "properties": {
+          "matches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IsccMatch"
+            }
+          }
+        }
+      },
+      "IsccMatch": {
+        "description": "A candidate C2PA Manifest. Fetch it from GET {endpoint}/manifests/{manifestId}.",
+        "allOf": [
+          {
+            "$ref": "c2pa-sbr.json#/components/schemas/c2pa.softBindingQueryResult/properties/matches/items"
+          },
+          {
+            "type": "object",
+            "required": [
+              "endpoint",
+              "similarityScore",
+              "isccId"
+            ],
+            "properties": {
+              "endpoint": {
+                "type": "string",
+                "description": "Address on this resolver from which the manifest is fetched, specific to the declaration",
+                "examples": [
+                  "https://c2pa.iscc.io/v1/iscc/maigkv5faaxoxyab"
+                ]
+              },
+              "similarityScore": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100,
+                "description": "100 for an equal Instance-Code, otherwise the best unit similarity, at most 99"
+              },
+              "isccId": {
+                "type": "string",
+                "pattern": "^ISCC:[A-Z2-7]{16}$",
+                "description": "Extension. ISCC-ID of the declaration that points to this manifest.",
+                "examples": [
+                  "ISCC:MAIGKV5FAAXOXYAB"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "Error": {
+        "description": "Error response",
+        "type": "object",
+        "required": [
+          "detail"
+        ],
+        "properties": {
+          "detail": {
+            "description": "A message, or a list of parameter errors",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "loc",
+                    "msg"
+                  ],
+                  "properties": {
+                    "loc": {
+                      "type": "array",
+                      "items": {
+                        "type": [
+                          "string",
+                          "integer"
+                        ]
+                      }
+                    },
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

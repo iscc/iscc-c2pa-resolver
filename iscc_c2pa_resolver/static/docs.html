@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ISCC C2PA Resolver - API reference</title>
+  <link rel="icon" href="/static/brand/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/brand/tokens/iscc.css">
+  <link rel="stylesheet" href="/static/vendor/stoplight-elements-9.0.27/styles.min.css">
+  <script src="/static/vendor/stoplight-elements-9.0.27/web-components.min.js"></script>
+  <style>
+    /* ISCC typography and accent on top of Stoplight Elements. */
+    :root {
+      --font-ui: var(--iscc-font-body);
+      --font-prose: var(--iscc-font-body);
+      --font-code: var(--iscc-font-detail);
+      --color-primary: var(--iscc-blue);
+    }
+    body {
+      margin: 0;
+    }
+    .sl-elements pre {
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <elements-api
+    apiDescriptionUrl="/openapi/openapi.json"
+    router="hash"
+    layout="sidebar"
+    hideExport="true"
+    logo="/static/brand/favicon.svg"
+  ></elements-api>
+</body>
+</html>

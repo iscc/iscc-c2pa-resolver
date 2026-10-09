@@ -1,0 +1,30 @@
+{
+  "$schema": "http://purl.org/iscc/schema",
+  "@context": "http://purl.org/iscc/context",
+  "@type": "TextDigitalDocument",
+  "id": "https://titusz.org/iscc/gateway/maigkv5faaxoxyab.json",
+  "iscc_id": "ISCC:MAIGKV5FAAXOXYAB",
+  "iscc_code": "ISCC:KADT6NPTBFIU53VEUP3BSQ4YHYFYD3C5RT5EQPSTES3V5G2VJ52JAJOPS65J2VAOK5SQ",
+  "name": "Cryptobiosis - What If AI Is Already Alive?",
+  "description": "On tardigrades, discontinuous consciousness, and why the arguments against AI being alive are weaker than you think.",
+  "creator": "Titusz Pan",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "rights": "© 2026 Titusz Pan, CC BY 4.0",
+  "keywords": [
+    "cryptobiosis",
+    "tardigrades",
+    "artificial intelligence",
+    "consciousness",
+    "philosophy of mind"
+  ],
+  "form": "Article",
+  "mediatype": "application/pdf",
+  "thumbnail": "data:image/webp;base64,UklGRkoFAABXRUJQVlA4ID4FAAAQGwCdASpaAIAAPxFurlIsJaOirBqtEYAiCWxsyBnYJ0Ia0JTtdZbsA1zNvRNAGcNg49EX+x3WfPb6aB6AHncerp/rslyO97FYHfsp/lM1BgjpWZ5Lv7ThVjcQD6OEm9e6vjHCRPEnmsUpYYN5vU/ksOO7RK+dD5ODtzUXcMGBFsgUfyJdHouP5KIq4EMDi5LU8+9eLWAs27RS018HFkwNH9qgqyTjRqo0nIoypfRGoY13I0fUd9DxSW2wuC3g65YqQ28XLiuETD1a+/nN2MiSpkx8p9zN498hRaVoep6tyAAA/vzmyfAWVDjy2/Ka3WPag/CcJC20IZTqrXVsSZcoCcfkmoxgjERzp+zMsKPNVORrzXdH+RgcbROXwnjke7U71wkGirpuny8BUN9rY9DAKbOMW36b9D9PCWk/fGTIkMFgt00FcfGNtCvKCxHV8Qadx0sLpcLivwaboZsh7lvU3faGnX06y4D8UkSzHDXrq/8CUSHj2V9q60A+kZza+MtLZJaIUq5vHtYX2jI5zvqlrrGPdN6e42nyvE8wGoSXnOYzL2pKAjGSH1JfTCw7mBYgVAzxBtpTZhaBQqTep71M6YMrScSgg73cn/GjA7yJ2YRV22+ufPbuOtpk/rfwlRNR6aCviB7ceI110UthoC8ITKTMFMTMchzhzRnbKSEotGYig1d5oqHhdFYdRkoWj81HQuCtVGZzFuM7NejPrXND4MjChhTWHnddw2dEsZqkIEJpoI8X5EfmfDbcarNpWuCH17eL69+NojutRIydVdPFgb8V0GczbWdJ126XRnBFpidGNzcsQeXPhE0q8hF218ex0jyqvO/ptR1BHuHvX38mThU/jbYwRI6f2AfYejbgilQ2X5LJqOVKX0GaxUwUvnPXu6OsGLw6OFyqITpf5u/tXpkujOSlfpQ8wQq+Wio761FuTrT5R62ScPXlaW2bPGriRnCpPJtIDja51fFhiJgRAJJ3IhgjeLnk05xlIq3G6UKFP6lhvk3gV3RGNlVZjYoG+Mbz7crThVl0TJyFll+8Nv6lXc9Y3FUa98Pq7wkx8aD8gzpQqOHJA1gq5od+rRb8df8gQ659Ua2u3fGum/6oYry7vG6Hwu3XW1DxSD9sm/jK/Jj2JhepzPe1oZczJ4g0GGUarYzJMD5HmGWG912bC6TySz/uL/tuMpmjGpMNOjMinYx8Lvw/trym0J1WFYSKWku2vZrdRs4rUEqy1GLeLFtJfQClWcC/hpQoAOS0S9sLdic5+q93QHFsw8JtWSS2ZU5dpp2TDiz5wgXo+RdppY/2wdX12bjCdls2Xl2yZDUyuFYnETEt2Xl9MhDcwCAkbM+LIuSB6Z6LyjYENnctGQxNPYc1BGJu/4YxX4FUwUXA6FiG0EmvO84+xY2J2Nb/c+4SetW9Vd7a+47g6SiNki4/PSidYpMaS3bDLklpClfiKtYw4uSUCHBN62gzDuI/XUSMkH2AGHXQ/FSDraA8XHORwTvwDG3MV9nyldtt0DyhOYoQ31/ESqFvuaLcGDmRPJd1Gk+z/oaxSvyK0j0Gyop0bE0Tmd+GiTk/1Ia43hM3L/TKPn3IvdfOItkis6kelIhtbXLHlFORfp0/TjeAI/kE2otY4K3HTiHeJIlwz5yMwzVAii2IBN7LbwPWCDntbP3SrJPJDmnitZ6yuCiUQL51qlfGPanl01fQ/lsWAxZaD28Zv9uCv25r+5/TYgAmOx59SBBRF/5JAaT1vMQCUTJgR+P90FTrKNN7hOA59PXLg+1064ghzA14AAAA",
+  "service": [
+    {
+      "id": "#metadata",
+      "type": "IsccMetadata",
+      "serviceEndpoint": "https://titusz.org/iscc/gateway/maigkv5faaxoxyab.json"
+    }
+  ]
+}

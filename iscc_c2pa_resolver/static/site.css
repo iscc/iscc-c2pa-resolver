@@ -1,0 +1,268 @@
+/* Landing page of the ISCC C2PA Resolver, built on the ISCC identity tokens (brand/tokens/iscc.css).
+ *
+ * Light scheme: paper canvas, near-black text, white fields with thin rules. Dark scheme: near-black canvas,
+ * Sky Blue links. Coral marks the primary action only; blue is the link colour. 8 px rhythm, left-aligned. */
+
+:root {
+  --bg: var(--iscc-paper);
+  --fg: var(--iscc-ink);
+  --muted: var(--iscc-muted);
+  --rule: var(--iscc-rule);
+  --field: var(--iscc-white);
+  --link: var(--iscc-blue);
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: var(--iscc-ink);
+    --fg: var(--iscc-paper);
+    --muted: #A9B0B6;
+    --rule: #3A4047;
+    --field: #2A2F35;
+    --link: var(--iscc-sky);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 300 var(--iscc-type-body) / var(--iscc-leading-body) var(--iscc-font-body);
+}
+
+a {
+  color: var(--link);
+}
+
+a:focus-visible,
+.btn:focus-visible {
+  outline: 2px solid var(--iscc-coral);
+  outline-offset: 2px;
+}
+
+.bar,
+main {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 var(--iscc-space-24);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: var(--iscc-space-24);
+  min-height: var(--iscc-space-96);
+  border-bottom: 1px solid var(--rule);
+}
+
+.logo img {
+  display: block;
+  width: 120px;
+  height: auto;
+}
+
+.label {
+  margin: 0;
+  color: var(--muted);
+  font: 400 var(--iscc-type-label) / var(--iscc-leading-label) var(--iscc-font-detail);
+  text-transform: uppercase;
+}
+
+.status {
+  margin-left: auto;
+  font: 400 var(--iscc-type-label) / var(--iscc-leading-label) var(--iscc-font-detail);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.status::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: var(--iscc-space-8);
+  border-radius: 50%;
+  background: var(--rule);
+}
+
+.status[data-state="ok"]::before {
+  background: var(--iscc-lime);
+}
+
+.status[data-state="degraded"]::before,
+.status[data-state="down"]::before {
+  background: var(--iscc-yellow);
+}
+
+.network {
+  padding: 0 var(--iscc-space-8);
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  font: 400 var(--iscc-type-label) / var(--iscc-leading-label) var(--iscc-font-detail);
+  text-transform: uppercase;
+}
+
+[data-network="testnet"] .network {
+  border-color: var(--iscc-yellow);
+  background: var(--iscc-yellow);
+  color: var(--iscc-ink);
+}
+
+body:not([data-network="testnet"]) .notice--testnet {
+  display: none;
+}
+
+section {
+  padding: var(--iscc-space-48) 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+section:last-child {
+  border-bottom: 0;
+}
+
+.hero {
+  padding-top: var(--iscc-space-64);
+}
+
+h1 {
+  max-width: 18ch;
+  margin: var(--iscc-space-16) 0 var(--iscc-space-24);
+  font-size: var(--iscc-type-h1);
+  line-height: var(--iscc-leading-h1);
+  font-weight: 400;
+}
+
+h2 {
+  margin: 0 0 var(--iscc-space-24);
+  font-size: var(--iscc-type-h2);
+  line-height: var(--iscc-leading-h2);
+  font-weight: 500;
+}
+
+p {
+  max-width: 70ch;
+}
+
+.lead {
+  font-size: 22px;
+  line-height: 32px;
+}
+
+.notice {
+  padding: 12px var(--iscc-space-16);
+  border-left: 4px solid var(--iscc-yellow);
+  background: var(--field);
+  font-size: var(--iscc-type-small);
+  line-height: var(--iscc-leading-small);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--iscc-space-16);
+  margin-top: var(--iscc-space-32);
+}
+
+.btn {
+  display: inline-block;
+  padding: 12px var(--iscc-space-24);
+  border: 1px solid var(--fg);
+  color: var(--fg);
+  font-weight: 500;
+  text-decoration: none;
+  transition: background var(--iscc-motion-fast) var(--iscc-motion-easing),
+    color var(--iscc-motion-fast) var(--iscc-motion-easing);
+}
+
+.btn:hover {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.btn--primary {
+  border-color: var(--iscc-coral);
+  background: var(--iscc-coral);
+  color: var(--iscc-ink);
+}
+
+.btn--primary:hover {
+  border-color: var(--iscc-ink);
+  background: var(--iscc-ink);
+  color: var(--iscc-paper);
+}
+
+.table {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--field);
+  border: 1px solid var(--rule);
+}
+
+th {
+  text-align: left;
+  color: var(--muted);
+  font: 400 var(--iscc-type-label) / var(--iscc-leading-label) var(--iscc-font-detail);
+  text-transform: uppercase;
+}
+
+th,
+td {
+  padding: 12px var(--iscc-space-16);
+  border-bottom: 1px solid var(--rule);
+  font-size: var(--iscc-type-small);
+  line-height: var(--iscc-leading-small);
+}
+
+code,
+pre {
+  font-family: var(--iscc-font-detail);
+  font-size: 14px;
+}
+
+pre {
+  overflow-x: auto;
+  padding: var(--iscc-space-16);
+  background: var(--field);
+  border: 1px solid var(--rule);
+}
+
+.bar--footer {
+  border-top: 1px solid var(--rule);
+  border-bottom: 0;
+  font-size: var(--iscc-type-small);
+  flex-wrap: wrap;
+}
+
+.version {
+  margin-left: auto;
+  color: var(--muted);
+  font-family: var(--iscc-font-detail);
+}
+
+@media (max-width: 640px) {
+  .bar {
+    flex-wrap: wrap;
+    gap: var(--iscc-space-8) var(--iscc-space-16);
+    padding-block: var(--iscc-space-16);
+  }
+
+  h1 {
+    font-size: var(--iscc-type-h2);
+    line-height: var(--iscc-leading-h2);
+  }
+
+  .lead {
+    font-size: var(--iscc-type-body);
+    line-height: var(--iscc-leading-body);
+  }
+}
