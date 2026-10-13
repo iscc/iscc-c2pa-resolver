@@ -14,12 +14,14 @@ from iscc_c2pa_resolver import app as app_module
 from iscc_c2pa_resolver.binding import MAX_VALUE_LENGTH
 from iscc_c2pa_resolver.settings import Settings
 from tests.conftest import (
+    CONTENT,
     ID_EARLY,
     ID_LATE,
     MANIFEST,
     MANIFEST_ID,
     MANIFEST_URL,
     META,
+    META_64,
     SEARCH_PATH,
     SEARCH_URL,
     VECTOR_1,
@@ -140,10 +142,9 @@ def test_query_by_large_binding(client, net):
 
 def test_query_sends_searchable_units_only(client, net):
     net.hits()
-    query(client, VECTOR_1)
+    query(client, encode([META_64, META, CONTENT]))
     body = json.loads(net.sent_to(SEARCH_URL + SEARCH_PATH)[0].read())
-    assert META not in body["units"]
-    assert len(body["units"]) == 3
+    assert body["units"] == [META, CONTENT]
 
 
 def test_query_caps_max_results(client, net):
@@ -157,7 +158,7 @@ def test_query_caps_max_results(client, net):
     [
         (VECTOR_1, "io.iscc.v1", {}),  # unsupported algorithm
         ("!!!", "io.iscc.v0", {}),  # not base64
-        (encode([META]), "io.iscc.v0", {}),  # nothing searchable
+        (encode([META_64]), "io.iscc.v0", {}),  # nothing searchable
         (VECTOR_1, "io.iscc.v0", {"maxResults": 0}),
         (VECTOR_1, "io.iscc.v0", {"maxResults": "ten"}),
         ("A" * (MAX_VALUE_LENGTH + 1), "io.iscc.v0", {}),

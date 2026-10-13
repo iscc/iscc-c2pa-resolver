@@ -33,7 +33,10 @@ MIRROR_URL = f"https://mirror.example/v1/manifests/{MANIFEST_ID}"  # the same ma
         ({"DATA_NONE_V0": 0.995}, 99),  # only an equal Instance-Code scores 100
         ({"CONTENT_TEXT_V0": 0.005}, 1),  # rounds half up
         ({"CONTENT_TEXT_V0": 0.0}, 0),
-        ({"META_NONE_V0": 1.0}, None),  # metadata alone never matches
+        ({"META_NONE_V0": 1.0}, 85),  # equal metadata is capped below the content range
+        ({"META_NONE_V0": 0.9, "CONTENT_IMAGE_V0": 0.8}, 85),
+        ({"META_NONE_V0": 0.844}, 84),
+        ({"META_NONE_V0": 0.8, "CONTENT_IMAGE_V0": 0.9}, 90),  # best single unit wins, no summing
         ({}, None),
     ],
 )
@@ -121,7 +124,7 @@ async def test_find_matches_ranks_and_cuts(ctx, net):
 async def test_find_matches_skips_unusable_hits(ctx, net, titusz_gateway):
     net.hits(
         hit(ID_EARLY, None, CONTENT_TEXT_V0=1.0),  # no gateway
-        hit(ID_EARLY, MANIFEST_URL, META_NONE_V0=1.0),  # metadata only
+        hit(ID_EARLY, MANIFEST_URL, INSTANCE_NONE_V0=0.0),  # no similarity unit, no equal Instance-Code
         hit(ID_LATE, TITUSZ_GATEWAY_URL, CONTENT_TEXT_V0=1.0),  # ordinary gateway document
         hit(ID_LATE, OTHER_URL, CONTENT_TEXT_V0=1.0),  # a manifest address that does not serve a manifest
         hit(ID_LATE, "https://b.example:invalid/v1/manifests/x", CONTENT_TEXT_V0=1.0),  # malformed

@@ -24,9 +24,8 @@ stores nothing between requests apart from caches.
 
 1. **Decode.** Only `alg=io.iscc.v0` is accepted. The value is decoded leniently (padded or unpadded, standard or
     URL-safe base64) into an ISCC-SEQ as defined by [IEP-0020](https://ieps.iscc.codes/iep-0020/). Units that are
-    not Version 0 with a 256-bit body are ignored, as IEP-0020 requires. Meta-Codes are ignored too: equal
-    metadata says nothing about equal content. A value without any usable Semantic-, Content-, Data- or
-    Instance-Code is rejected with `400`.
+    not Version 0 with a 256-bit body are ignored, as IEP-0020 requires. A value without any usable Meta-,
+    Semantic-, Content-, Data- or Instance-Code is rejected with `400`.
 1. **Search.** The units go to the aggregator, asking for five times `maxResults` candidates (at most 100),
     because most declarations in the network carry no manifest.
 1. **Check manifest addresses.** Hits whose gateway URL is not of the form `https://…/manifests/{manifestId}` are
@@ -43,11 +42,14 @@ stores nothing between requests apart from caches.
 
 C2PA defines `similarityScore` as an integer from 0 to 100 whose meaning each algorithm defines. For `io.iscc.v0`:
 
-| Match                                                  | Score                                 |
-| ------------------------------------------------------ | ------------------------------------- |
-| Equal Instance-Code: the same bytes as the source      | 100                                   |
-| Otherwise, best Semantic-, Content- or Data-Code match | 100 × similarity, rounded, at most 99 |
-| Meta-Code                                              | never contributes                     |
+| Match                                             | Score                                 |
+| ------------------------------------------------- | ------------------------------------- |
+| Equal Instance-Code: the same bytes as the source | 100                                   |
+| Semantic-, Content- or Data-Code match            | 100 × similarity, rounded, at most 99 |
+| Meta-Code match                                   | 100 × similarity, rounded, at most 85 |
+
+Without an equal Instance-Code, the best single unit sets the score; scores of several units are not added up. A
+Meta-Code has the lower ceiling because equal metadata is weaker evidence than similar content.
 
 A score is a shortlisting signal, not a verdict. As [IEP-0020](https://ieps.iscc.codes/iep-0020/) explains,
 similar ISCC-UNITs make a manifest a *candidate*; the client confirms it, for example by comparing the claim

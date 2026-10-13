@@ -7,11 +7,11 @@ import iscc_core as ic
 import pytest
 
 from iscc_c2pa_resolver.binding import MAX_VALUE_LENGTH, decode_base64, decode_value, is_searchable
-from tests.conftest import CONTENT, DATA, DATA_CODE, INSTANCE, META, VECTOR_1, encode
+from tests.conftest import CONTENT, DATA, DATA_CODE, INSTANCE, META, META_64, VECTOR_1, encode
 
 
-def test_decode_value_vector_1_drops_meta_code():
-    assert decode_value(VECTOR_1) == [CONTENT, DATA_CODE, INSTANCE]
+def test_decode_value_vector_1_keeps_all_units():
+    assert decode_value(VECTOR_1) == [META, CONTENT, DATA_CODE, INSTANCE]
 
 
 def test_decode_value_of_a_signed_manifest():
@@ -20,7 +20,12 @@ def test_decode_value_of_a_signed_manifest():
     manifest = store["manifests"][store["active_manifest"]]
     (assertion,) = [a for a in manifest["assertions"] if a["label"] == "c2pa.soft-binding"]
     value = base64.b64encode(bytes(assertion["data"]["blocks"][0]["value"])).decode()
-    assert [ic.iscc_decode(unit)[0] for unit in decode_value(value)] == [ic.MT.CONTENT, ic.MT.DATA, ic.MT.INSTANCE]
+    assert [ic.iscc_decode(unit)[0] for unit in decode_value(value)] == [
+        ic.MT.META,
+        ic.MT.CONTENT,
+        ic.MT.DATA,
+        ic.MT.INSTANCE,
+    ]
 
 
 def test_decode_value_matches_reference_encoding():
@@ -37,7 +42,7 @@ def test_decode_value_matches_reference_encoding():
     ],
 )
 def test_decode_value_is_lenient(variant):
-    assert decode_value(variant) == [CONTENT, DATA_CODE, INSTANCE]
+    assert decode_value(variant) == [META, CONTENT, DATA_CODE, INSTANCE]
 
 
 def test_decode_value_removes_duplicate_units():
@@ -80,9 +85,13 @@ def test_decode_value_ignores_unknown_subtype_next_to_valid_units():
     assert decode_value(value) == [DATA_CODE]
 
 
-def test_decode_value_rejects_meta_code_only():
+def test_decode_value_accepts_meta_code_only():
+    assert decode_value(encode([META])) == [META]
+
+
+def test_decode_value_rejects_short_meta_code_only():
     with pytest.raises(ValueError, match="256-bit"):
-        decode_value(encode([META]))
+        decode_value(encode([META_64]))
 
 
 def test_decode_value_rejects_unknown_subtype_unit():
@@ -107,7 +116,8 @@ def test_decode_value_rejects_overlong_value():
         (CONTENT, True),
         (DATA_CODE, True),
         (INSTANCE, True),
-        (META, False),
+        (META, True),
+        (META_64, False),
         ("ISCC:EAASKDNZNYGUUF5A", False),  # 64-bit Content-Code
     ],
 )

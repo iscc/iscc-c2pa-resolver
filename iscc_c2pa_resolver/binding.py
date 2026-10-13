@@ -7,7 +7,7 @@ import iscc_core as ic
 
 ALG = "io.iscc.v0"
 MAX_VALUE_LENGTH = 4096  # base64 characters, about 90 ISCC-UNITs of 256 bits
-SEARCHABLE_TYPES = {ic.MT.SEMANTIC, ic.MT.CONTENT, ic.MT.DATA, ic.MT.INSTANCE}
+SEARCHABLE_TYPES = {ic.MT.META, ic.MT.SEMANTIC, ic.MT.CONTENT, ic.MT.DATA, ic.MT.INSTANCE}
 
 
 def decode_base64(value):
@@ -23,11 +23,11 @@ def decode_base64(value):
 
 def is_searchable(unit):
     # type: (str) -> bool
-    """Tell whether an ISCC-UNIT is usable for matching: Version 0, 256-bit body, no Meta-Code.
+    """Tell whether an ISCC-UNIT is usable for matching: a Version 0 Meta-, Semantic-, Content-, Data- or
+    Instance-Code with a 256-bit body.
 
-    IEP-0020 requires resolvers to ignore shorter units. Meta-Codes are left out because equal metadata says
-    nothing about equal content, so they never contribute to a match. Units with a SubType unknown to iscc-core
-    are ignored, as IEP-0020 requires, instead of failing the query.
+    IEP-0020 requires resolvers to ignore shorter units. Units with a SubType unknown to iscc-core are ignored, as
+    IEP-0020 requires, instead of failing the query.
     """
     try:
         maintype, _subtype, version, _length, body = ic.iscc_decode(unit)
@@ -51,5 +51,5 @@ def decode_value(value):
     units = ic.decode_seq(seq)
     searchable = [unit for unit in dict.fromkeys(units) if is_searchable(unit)]
     if not searchable:
-        raise ValueError("Value holds no 256-bit Version 0 Semantic-, Content-, Data- or Instance-Code")
+        raise ValueError("Value holds no 256-bit Version 0 Meta-, Semantic-, Content-, Data- or Instance-Code")
     return searchable

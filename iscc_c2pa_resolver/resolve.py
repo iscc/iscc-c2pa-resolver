@@ -20,7 +20,9 @@ from iscc_c2pa_resolver.settings import Settings
 
 MAX_RESULTS = 100
 OVERSAMPLE = 5  # most declarations carry no manifest, so ask for more candidates than results
-SIMILARITY_TYPES = ("SEMANTIC_", "CONTENT_", "DATA_")
+BEST_SIMILAR = 99  # highest score without an equal Instance-Code
+BEST_META = 85  # highest score of a Meta-Code: equal metadata is weaker evidence than similar content
+CEILINGS = {"META_": BEST_META, "SEMANTIC_": BEST_SIMILAR, "CONTENT_": BEST_SIMILAR, "DATA_": BEST_SIMILAR}
 RECENT_TTL = 3600  # seconds a returned manifest ID stays fetchable without `endpoint`
 RECENT_MAX = 100_000
 
@@ -47,17 +49,28 @@ class Candidate:
     pointer: gateway.Pointer
 
 
+def percent(similarity, ceiling):
+    # type: (float, int) -> int
+    """Turn a similarity from 0 to 1 into a percentage, rounded half up and capped at `ceiling`."""
+    return min(ceiling, max(0, math.floor(similarity * 100 + 0.5)))
+
+
+def unit_score(name, similarity):
+    # type: (str, float) -> int | None
+    """Score one unit type of a hit, or None if the type is not a Meta-, Semantic-, Content- or Data-Code."""
+    ceiling = next((c for prefix, c in CEILINGS.items() if name.startswith(prefix)), None)
+    return None if ceiling is None else percent(similarity, ceiling)
+
+
 def similarity_score(types):
     # type: (dict[str, float]) -> int | None
-    """Score a hit from its per-unit-type scores: 100 for an equal Instance-Code, otherwise the best Semantic-,
-    Content- or Data-Code similarity as an integer of at most 99. None if no such unit matched.
+    """Score a hit from its per-unit-type scores: 100 for an equal Instance-Code, otherwise the best single unit
+    score (Semantic-, Content- and Data-Codes at most 99, Meta-Codes at most 85). None if no such unit matched.
     """
     if any(name.startswith("INSTANCE_") and value >= 1.0 for name, value in types.items()):
         return 100
-    scores = [value for name, value in types.items() if name.startswith(SIMILARITY_TYPES)]
-    if not scores:
-        return None
-    return min(99, max(0, math.floor(max(scores) * 100 + 0.5)))
+    scores = [s for name, value in types.items() if (s := unit_score(name, value)) is not None]
+    return max(scores) if scores else None
 
 
 def rank_key(candidate):
