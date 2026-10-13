@@ -100,3 +100,10 @@ declaration ([how it works](how-it-works.md#fetching-the-manifest)).
 | `500`  | The search backend or the manifest repository is unavailable                                 |
 
 Error bodies are JSON with a `detail` member.
+
+## Rate limits
+
+The mainnet instance `c2pa.iscc.io` limits each client address to 60 requests per minute and 5000 per day on the routes
+that contact other servers: `/v1/matches/…`, `/v1/manifests/…` and `/v1/iscc/…`. Answers on these routes carry a
+`RateLimit-Policy` header. Above the limit the answer is `429` with a `Retry-After` header and a JSON body that names
+the limit and a contact address. The service routes, the discovery document and the landing page are not limited.

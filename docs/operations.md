@@ -61,7 +61,18 @@ allow that origin in `connect-src`, `blob:` in `worker-src` and `img-src`, and `
 | `main`, `sha-<sha>` | Every push to `main` that passes all checks                                      |
 | `X.Y.Z`, `latest`   | A GitHub Release `vX.Y.Z`; the tested `sha-<sha>` image is retagged, not rebuilt |
 
-Testnet follows `main`. Mainnet runs a release tag.
+## Public instances
+
+| Instance            | Image tag | Search index | Updates                                                            |
+| ------------------- | --------- | ------------ | ------------------------------------------------------------------ |
+| `c2pa-test.iscc.io` | `main`    | `idptest`    | Within about 15 minutes of a push to `main` that passes all checks |
+| `c2pa.iscc.io`      | `latest`  | `idp`        | Within about 15 minutes of a published GitHub Release `vX.Y.Z`     |
+
+A cron job on each host pulls the tag every 15 minutes and recreates the container when the image changes. A
+prerelease does not move `latest`, so it reaches neither instance. To roll mainnet back, the operator pins a version
+tag such as `0.1.0` in the host's compose file until a fixed release is published. Mainnet applies the rate limits
+described in the [API reference](api.md#rate-limits) (testnet has none), and [status.iscc.io](https://status.iscc.io)
+monitors its `GET /v1/services/status`.
 
 ## Security
 
