@@ -148,7 +148,7 @@ all = { sequence = ["format", "typecheck", "test", "test-js"], help = "Format, t
 ci = { sequence = ["lint", "typecheck", "test", "test-js", "audit"], help = "All quality gates without modifying files" }
 
 [tool.uv.sources]
-zensical-iscc = { git = "https://github.com/iscc/zensical-iscc", tag = "v0.2.0" }
+zensical-iscc = { git = "https://github.com/iscc/zensical-iscc", tag = "v0.3.2" }
 
 [tool.uv]
 default-groups = ["dev", "docs"]
