@@ -3,12 +3,12 @@
   "info": {
     "title": "C2PA Soft Binding Resolution API",
     "description": "This is the OpenAPI specification of the C2PA Soft Binding Resolution API. This document specifies a web service API endpoint for matching soft bindings (e.g., watermarks or fingerprints) to C2PA Manifests. Implementations of this API shall implement at least one of the query endpoints and the fetch GET /manifests/{activeManifestId} endpoint for retrieving a C2PA Manifest store",
-    "version": "2.4.0",
+    "version": "2.5.0",
     "license": {
       "name": "Creative Commons Attribution 4.0 International",
       "url": "https://creativecommons.org/licenses/by/4.0/"
     },
-    "x-source": "https://github.com/c2pa-org/specs-core/blob/c1849a8ef66dff90384c4546dfd302885737e4b4/docs/modules/softbinding/partials/softbinding-resolution-api.openapi.json",
+    "x-source": "https://github.com/c2pa-org/specs-core/blob/40964833bd97b8dcd941517edd057de28e393d4e/docs/modules/softbinding/partials/softbinding-resolution-api.openapi.json",
     "x-subset": "Operations implemented by iscc-c2pa-resolver, copied verbatim by scripts/sync_c2pa_openapi.py"
   },
   "paths": {

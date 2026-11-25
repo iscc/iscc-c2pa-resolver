@@ -71,7 +71,7 @@ def test_upstream_subset_is_attributed():
 def test_spec_implements_c2pa_specification_version():
     from iscc_c2pa_resolver.app import SPEC_VERSION
 
-    assert UPSTREAM["info"]["version"] == SPEC_VERSION
+    assert OURS["info"]["version"] == UPSTREAM["info"]["version"] == SPEC_VERSION
 
 
 @pytest.mark.parametrize(("path", "method"), UPSTREAM_OPERATIONS)

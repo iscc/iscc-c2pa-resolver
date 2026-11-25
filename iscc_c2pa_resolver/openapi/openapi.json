@@ -2,9 +2,9 @@
   "openapi": "3.1.1",
   "info": {
     "title": "ISCC C2PA Resolver",
-    "version": "0.1.0",
+    "version": "2.5.0",
     "summary": "C2PA Soft Binding Resolution API for io.iscc.v0 on the ISCC Discovery Protocol",
-    "description": "Recovers C2PA Manifests by content. Send the base64 ISCC-SEQ of an asset (IEP-0020) as an `io.iscc.v0` soft\nbinding; the resolver searches the ISCC Discovery Protocol for declarations of similar content whose gateway URL\nis the address of a C2PA Manifest, and returns those manifests as matches.\n\nImplements the query, fetch and service routes of the C2PA Soft Binding Resolution API as defined for the\nupcoming C2PA specification 2.5, whose OpenAPI document still carries version 2.4.0. Schemas named `c2pa.*` are\ncopied verbatim from the C2PA OpenAPI document (`c2pa-sbr.json`, CC BY 4.0).\nAccess is open; no token is required.\n\n**Experimental (beta, MVP).** This service and its documentation are provided as is, without warranty of any kind. The API, the gateway contract and the public instances may change in breaking ways before version 1.0.\n",
+    "description": "Recovers C2PA Manifests by content. Send the base64 ISCC-SEQ of an asset (IEP-0020) as an `io.iscc.v0` soft\nbinding; the resolver searches the ISCC Discovery Protocol for declarations of similar content whose gateway URL\nis the address of a C2PA Manifest, and returns those manifests as matches.\n\nImplements the query, fetch and service routes of the C2PA Soft Binding Resolution API as defined by\nC2PA specification 2.5. Schemas named `c2pa.*` are copied verbatim from the C2PA OpenAPI document\n(`c2pa-sbr.json`, CC BY 4.0).\nAccess is open; no token is required.\n\n**Experimental (beta, MVP).** This service and its documentation are provided as is, without warranty of any kind. The API, the gateway contract and the public instances may change in breaking ways before version 1.0.\n",
     "license": {
       "name": "Apache-2.0",
       "identifier": "Apache-2.0"
