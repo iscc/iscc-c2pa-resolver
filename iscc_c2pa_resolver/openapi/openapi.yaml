@@ -1,16 +1,16 @@
 openapi: 3.1.1
 info:
   title: ISCC C2PA Resolver
-  version: 0.1.0
+  version: 2.5.0 # the C2PA specification requires the same value as c2paSpecificationVersion
   summary: C2PA Soft Binding Resolution API for io.iscc.v0 on the ISCC Discovery Protocol
   description: |
     Recovers C2PA Manifests by content. Send the base64 ISCC-SEQ of an asset (IEP-0020) as an `io.iscc.v0` soft
     binding; the resolver searches the ISCC Discovery Protocol for declarations of similar content whose gateway URL
     is the address of a C2PA Manifest, and returns those manifests as matches.
 
-    Implements the query, fetch and service routes of the C2PA Soft Binding Resolution API as defined for the
-    upcoming C2PA specification 2.5, whose OpenAPI document still carries version 2.4.0. Schemas named `c2pa.*` are
-    copied verbatim from the C2PA OpenAPI document (`c2pa-sbr.json`, CC BY 4.0).
+    Implements the query, fetch and service routes of the C2PA Soft Binding Resolution API as defined by
+    C2PA specification 2.5. Schemas named `c2pa.*` are copied verbatim from the C2PA OpenAPI document
+    (`c2pa-sbr.json`, CC BY 4.0).
     Access is open; no token is required.
 
     **Experimental (beta, MVP).** This service and its documentation are provided as is, without warranty of any kind. The API, the gateway contract and the public instances may change in breaking ways before version 1.0.

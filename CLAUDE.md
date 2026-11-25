@@ -5,7 +5,7 @@ Guidance for coding agents working in this repository.
 ## Project
 
 **iscc-c2pa-resolver** is a FastAPI service that implements the query, fetch and service routes of the C2PA Soft
-Binding Resolution API (upcoming specification 2.5, whose OpenAPI document still says 2.4.0) for the fingerprint
+Binding Resolution API (specification 2.5) for the fingerprint
 algorithm `io.iscc.v0`. It is a read-only search client of the ISCC Discovery Protocol: it searches an iscc-search
 aggregator and returns the hits whose gateway URL is a manifest address on a Soft Binding Resolution API
 (`https://…/manifests/{manifestId}`) that serves a C2PA Manifest Store; other gateway URLs are never fetched. It

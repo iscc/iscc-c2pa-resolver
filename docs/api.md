@@ -11,9 +11,9 @@ icon: lucide/braces
     This beta MVP and its documentation are provided as is, without warranty of any kind. The API, the gateway contract and the public instances may change in breaking ways before version 1.0.
 
 The resolver implements the query, fetch and service routes of the
-[C2PA Soft Binding Resolution API](https://spec.c2pa.org/specifications/specifications/2.4/softbinding/Decoupled.html)
-for one algorithm, `io.iscc.v0`. It follows the API of the upcoming C2PA specification 2.5, which adds the service
-routes; the OpenAPI document of that draft still carries version `2.4.0`. Access is open; no token is required.
+[C2PA Soft Binding Resolution API](https://spec.c2pa.org/specifications/specifications/2.5/softbinding/Decoupled.html)
+for one algorithm, `io.iscc.v0`. It follows the API of C2PA specification 2.5, the first version with the status,
+capabilities and discovery routes. Access is open; no token is required.
 Every instance serves an interactive API reference at `/docs` and the OpenAPI document at `/openapi/openapi.json`
 (also as `/openapi/openapi.yaml`). Schemas named `c2pa.*` in that document are copied verbatim from the C2PA
 OpenAPI definition (`/openapi/c2pa-sbr.json`, CC BY 4.0).
@@ -28,7 +28,7 @@ OpenAPI definition (`/openapi/c2pa-sbr.json`, CC BY 4.0).
 | `GET /v1/iscc/{isccId}/manifests/{manifestId}`  | The manifest of a match, as linked by its `endpoint`                         |
 | `GET /v1/manifests/{manifestId}`                | The manifest of a match of the last hour, for clients that ignore `endpoint` |
 | `GET /v1/services/supportedAlgorithms`          | `{"watermarks": [], "fingerprints": [{"alg": "io.iscc.v0"}]}`                |
-| `GET /v1/services/capabilities`                 | `info.version` of `c2pa-sbr.json` (`2.4.0`), no optional capabilities        |
+| `GET /v1/services/capabilities`                 | `info.version` of the OpenAPI document (`2.5.0`), no optional capabilities   |
 | `GET /v1/services/status`                       | `ok`, or `degraded` while the search backend is not ready                    |
 | `GET /.well-known/c2pa-soft-binding-resolution` | Absolute URLs of the API base, capability and status routes                  |
 

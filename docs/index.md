@@ -22,7 +22,7 @@ Discovery Protocol, and points the client to the manifest.
 [How it works](how-it-works.md){ .iscc-btn .iscc-btn--primary }
 [API reference](api.md){ .iscc-btn }
 
-*Open source · C2PA Soft Binding Resolution API, upcoming C2PA 2.5 · maintained by the [ISCC Foundation](https://iscc.io)*
+*Open source · C2PA Soft Binding Resolution API, C2PA 2.5 · maintained by the [ISCC Foundation](https://iscc.io)*
 
 ## Find your path
 

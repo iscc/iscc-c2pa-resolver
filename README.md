@@ -6,12 +6,11 @@
 > [!WARNING]
 > **Experimental (beta, MVP).** This service and its documentation are provided as is, without warranty of any kind. The API, the gateway contract and the public instances may change in breaking ways before version 1.0.
 
-A [C2PA Soft Binding Resolution API](https://spec.c2pa.org/specifications/specifications/2.4/softbinding/Decoupled.html)
+A [C2PA Soft Binding Resolution API](https://spec.c2pa.org/specifications/specifications/2.5/softbinding/Decoupled.html)
 for the ISCC fingerprint `io.iscc.v0`. It recovers lost C2PA Manifests by content: a client sends the ISCC of a
 file that lost its Content Credentials, the resolver searches the ISCC Discovery Protocol for declarations of
 similar content whose gateway URL is the address of a C2PA Manifest, and returns those manifests as matches.
-It follows the Soft Binding Resolution API of the upcoming C2PA specification 2.5, whose OpenAPI document still
-carries version 2.4.0.
+It follows the Soft Binding Resolution API of C2PA specification 2.5.
 
 | Network | Resolver                    | Search backend                |
 | ------- | --------------------------- | ----------------------------- |
