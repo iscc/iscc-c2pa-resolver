@@ -1030,7 +1030,7 @@ wheels = [
 
 [[package]]
 name = "iscc-c2pa-resolver"
-version = "0.2.0"
+version = "0.2.1"
 source = { editable = "." }
 default-groups = ["dev", "docs"]
 dependencies = [
