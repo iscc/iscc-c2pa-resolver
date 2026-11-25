@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1
 
 # Build stage: install the locked runtime dependencies and the package into a virtual environment.
-FROM python:3.13-slim AS build
-COPY --from=ghcr.io/astral-sh/uv:0.12.23 /uv /bin/uv
+FROM python:3.14-slim AS build
+COPY --from=ghcr.io/astral-sh/uv:0.13.9 /uv /bin/uv
 ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy UV_NO_CACHE=1 UV_PYTHON_DOWNLOADS=never
 WORKDIR /app
 COPY pyproject.toml uv.lock README.md ./
@@ -11,7 +11,7 @@ COPY iscc_c2pa_resolver ./iscc_c2pa_resolver
 RUN uv sync --frozen --no-default-groups --no-editable
 
 # Runtime stage: the virtual environment only, run by an unprivileged user.
-FROM python:3.13-slim
+FROM python:3.14-slim
 RUN useradd --system --uid 10001 --no-create-home resolver
 COPY --from=build /app/.venv /app/.venv
 ENV PATH=/app/.venv/bin:$PATH \
